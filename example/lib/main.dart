@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Flutter Demo',
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'MoreMainAxisAlignment'),
     );
   }
 }
@@ -31,23 +31,46 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
       body: Center(
-        child: MoreFlex(
-          direction: Axis.horizontal,
-          moreMainAxisAlignment: MoreMainAxisAlignment.spaceAroundFibBack,
-          children: [
-            for (int i = 0; i < 5; i++)
-              Container(
-                width: 20,
-                height: 20,
-                color: Colors.lightBlue,
+        child: ListView.builder(
+          itemCount: MoreMainAxisAlignment.values.length,
+          itemBuilder: (context, index) {
+            return Container(
+              color: index.isEven ? Colors.white : Colors.black12,
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Column(
+                children: [
+                  MoreFlex(
+                    direction: Axis.horizontal,
+                    moreMainAxisAlignment: MoreMainAxisAlignment.values[index],
+                    children: [
+                      for (int i = 0; i < 5; i++)
+                        Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                    ],
+                  ),
+                  Text(MoreMainAxisAlignment.values[index].toShortString()),
+                ],
               ),
-          ],
+            );
+          },
         ),
       ),
     );
+  }
+}
+
+
+extension on MoreMainAxisAlignment{
+  String toShortString(){
+    return toString().split('.').last;
   }
 }
