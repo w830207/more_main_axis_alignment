@@ -33,7 +33,11 @@ enum MoreMainAxisAlignment {
 
   /// same as [spaceBetweenFib] but backward.
   spaceBetweenFibBack,
+
+  /// Place the space around the children according to the Fibonacci sequence.
   spaceAroundFib,
+
+  /// same as [spaceAroundFib] but backward.
   spaceAroundFibBack,
 }
 
@@ -656,7 +660,7 @@ class MoreRenderFlex extends RenderFlex {
     late final double betweenSpace;
     late final double unitSpace;
     bool fibForward = true;
-    late int fibCount;
+    int fibCount =0;
 
     // flipMainAxis is used to decide whether to lay out
     // left-to-right/top-to-bottom (false), or right-to-left/bottom-to-top
