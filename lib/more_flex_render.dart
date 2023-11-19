@@ -28,6 +28,18 @@ enum MoreMainAxisAlignment {
   /// space before and after the first and last child.
   spaceBeside,
 
+  /// Place the space between the children according to the Arithmetic sequence 1,2,3... .
+  spaceBetweenStep,
+
+  /// same as [spaceBetweenStep] but backward.
+  spaceBetweenStepBack,
+
+  /// Place the space around the children according to the Arithmetic sequence 1,2,3... .
+  spaceAroundStep,
+
+  /// same as [spaceAroundStep] but backward.
+  spaceAroundStepBack,
+
   /// Place the space between the children according to the Fibonacci sequence.
   spaceBetweenFib,
 
@@ -39,6 +51,12 @@ enum MoreMainAxisAlignment {
 
   /// same as [spaceAroundFib] but backward.
   spaceAroundFibBack,
+}
+
+enum MainAxisAlignmentMode {
+  normal,
+  step,
+  fib,
 }
 
 bool? _startIsTopLeft(Axis direction, TextDirection? textDirection,
@@ -659,8 +677,9 @@ class MoreRenderFlex extends RenderFlex {
     late final double leadingSpace;
     late final double betweenSpace;
     late final double unitSpace;
-    bool fibForward = true;
-    int fibCount =0;
+    bool isForward = true;
+    int count = 0;
+    MainAxisAlignmentMode mode = MainAxisAlignmentMode.normal;
 
     // flipMainAxis is used to decide whether to lay out
     // left-to-right/top-to-bottom (false), or right-to-left/bottom-to-top
@@ -671,6 +690,8 @@ class MoreRenderFlex extends RenderFlex {
         !(_startIsTopLeft(direction, textDirection, verticalDirection) ?? true);
 
     switch (moreMainAxisAlignment) {
+      /* mode normal */
+
       case MoreMainAxisAlignment.start:
         leadingSpace = 0.0;
         betweenSpace = 0.0;
@@ -693,28 +714,56 @@ class MoreRenderFlex extends RenderFlex {
         betweenSpace = remainingSpace / (childCount + 3);
         leadingSpace = betweenSpace * 2;
 
-      case MoreMainAxisAlignment.spaceBetweenFib:
-        fibForward = true;
-        fibCount = 0;
-        leadingSpace = 0.0;
-        unitSpace = remainingSpace / _goldenSum(childCount);
-      case MoreMainAxisAlignment.spaceBetweenFibBack:
-        fibForward = false;
-        fibCount = childCount;
-        leadingSpace = 0.0;
-        unitSpace = remainingSpace / _goldenSum(childCount);
+      /* mode step */
 
-      case MoreMainAxisAlignment.spaceAroundFib:
-        fibForward = true;
-        fibCount = 1;
-        unitSpace = remainingSpace / _goldenSum(childCount + 2);
+      case MoreMainAxisAlignment.spaceBetweenStep:
+        mode = MainAxisAlignmentMode.step;
+        count = 0;
+        leadingSpace = 0.0;
+        unitSpace = remainingSpace / _getStepSum(childCount - 1);
+      case MoreMainAxisAlignment.spaceBetweenStepBack:
+        mode = MainAxisAlignmentMode.step;
+        isForward = false;
+        count = childCount;
+        leadingSpace = 0.0;
+        unitSpace = remainingSpace / _getStepSum(childCount - 1);
+      case MoreMainAxisAlignment.spaceAroundStep:
+        mode = MainAxisAlignmentMode.step;
+        count = 1;
+        unitSpace = remainingSpace / _getStepSum(childCount + 1);
         leadingSpace = unitSpace;
+      case MoreMainAxisAlignment.spaceAroundStepBack:
+        mode = MainAxisAlignmentMode.step;
+        isForward = false;
+        count = childCount + 1;
+        unitSpace = remainingSpace / _getStepSum(childCount + 1);
+        leadingSpace = unitSpace * (childCount + 1);
 
+      /* mode fib */
+
+      case MoreMainAxisAlignment.spaceBetweenFib:
+        mode = MainAxisAlignmentMode.fib;
+        count = 0;
+        leadingSpace = 0.0;
+        unitSpace = remainingSpace / _getFibSum(childCount - 1);
+      case MoreMainAxisAlignment.spaceBetweenFibBack:
+        mode = MainAxisAlignmentMode.fib;
+        isForward = false;
+        count = childCount;
+        leadingSpace = 0.0;
+        unitSpace = remainingSpace / _getFibSum(childCount - 1);
+      case MoreMainAxisAlignment.spaceAroundFib:
+        mode = MainAxisAlignmentMode.fib;
+        isForward = true;
+        count = 1;
+        unitSpace = remainingSpace / _getFibSum(childCount + 1);
+        leadingSpace = unitSpace;
       case MoreMainAxisAlignment.spaceAroundFibBack:
-        fibForward = false;
-        fibCount = childCount + 1;
-        unitSpace = remainingSpace / _goldenSum(childCount + 2);
-        leadingSpace = unitSpace * _goldenNumber(childCount +1);
+        mode = MainAxisAlignmentMode.fib;
+        isForward = false;
+        count = childCount + 1;
+        unitSpace = remainingSpace / _getFibSum(childCount + 1);
+        leadingSpace = unitSpace * _getFibNumber(childCount + 1);
     }
 
     // Position elements
@@ -723,7 +772,7 @@ class MoreRenderFlex extends RenderFlex {
     RenderBox? child = firstChild;
 
     while (child != null) {
-      fibForward ? fibCount++ : fibCount--;
+      isForward ? count++ : count--;
       final FlexParentData childParentData =
           child.parentData! as FlexParentData;
       final double childCrossPosition;
@@ -766,34 +815,52 @@ class MoreRenderFlex extends RenderFlex {
               Offset(childCrossPosition, childMainPosition);
       }
 
-      if (MoreMainAxisAlignment.values.indexOf(moreMainAxisAlignment) > 6) {
-        if (flipMainAxis) {
-          childMainPosition -= unitSpace * _goldenNumber(fibCount);
-        } else {
-          childMainPosition +=
-              _getMainSize(child.size) + unitSpace * _goldenNumber(fibCount);
-        }
-      } else {
-        if (flipMainAxis) {
-          childMainPosition -= betweenSpace;
-        } else {
-          childMainPosition += _getMainSize(child.size) + betweenSpace;
-        }
+      switch (mode) {
+        case MainAxisAlignmentMode.normal:
+          if (flipMainAxis) {
+            childMainPosition -= betweenSpace;
+          } else {
+            childMainPosition += _getMainSize(child.size) + betweenSpace;
+          }
+          break;
+        case MainAxisAlignmentMode.step:
+          if (flipMainAxis) {
+            childMainPosition -= unitSpace * count;
+          } else {
+            childMainPosition += _getMainSize(child.size) + unitSpace * count;
+          }
+          break;
+        case MainAxisAlignmentMode.fib:
+          if (flipMainAxis) {
+            childMainPosition -= unitSpace * _getFibNumber(count);
+          } else {
+            childMainPosition +=
+                _getMainSize(child.size) + unitSpace * _getFibNumber(count);
+          }
+          break;
       }
 
       child = childParentData.nextSibling;
     }
   }
 
-  int _goldenNumber(int number) {
-    if (number < 2) return number;
-    return _goldenNumber(number - 1) + _goldenNumber(number - 2);
+  int _getStepSum(int length) {
+    int sum = 0;
+    for (int i = 1; i <= length; i++) {
+      sum += i;
+    }
+    return sum;
   }
 
-  int _goldenSum(int length) {
+  int _getFibNumber(int number) {
+    if (number < 2) return number;
+    return _getFibNumber(number - 1) + _getFibNumber(number - 2);
+  }
+
+  int _getFibSum(int length) {
     int sum = 0;
-    for (int i = 0; i < length; i++) {
-      sum += _goldenNumber(i);
+    for (int i = 1; i <= length; i++) {
+      sum += _getFibNumber(i);
     }
     return sum;
   }
