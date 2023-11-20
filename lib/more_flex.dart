@@ -100,3 +100,33 @@ class MoreFlex extends MultiChildRenderObjectWidget {
         defaultValue: null));
   }
 }
+
+class MoreRow extends MoreFlex {
+  const MoreRow({
+    super.key,
+    super.moreMainAxisAlignment,
+    super.mainAxisSize,
+    super.crossAxisAlignment,
+    super.textDirection,
+    super.verticalDirection,
+    super.textBaseline, // NO DEFAULT: we don't know what the text's baseline should be
+    super.children,
+  }) : super(
+    direction: Axis.horizontal,
+  );
+}
+
+class MoreColumn extends MoreFlex {
+  const MoreColumn({
+    super.key,
+    super.moreMainAxisAlignment,
+    super.mainAxisSize,
+    super.crossAxisAlignment,
+    super.textDirection,
+    super.verticalDirection,
+    super.textBaseline, // NO DEFAULT: we don't know what the text's baseline should be
+    super.children,
+  }) : super(
+    direction: Axis.vertical,
+  );
+}
