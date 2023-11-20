@@ -51,12 +51,16 @@ enum MoreMainAxisAlignment {
 
   /// same as [spaceAroundFib] but backward.
   spaceAroundFibBack,
+
+  /// place children by using [MoreRenderFlex.customList]
+  custom,
 }
 
 enum MainAxisAlignmentMode {
   normal,
   step,
   fib,
+  custom,
 }
 
 bool? _startIsTopLeft(Axis direction, TextDirection? textDirection,
@@ -97,9 +101,26 @@ class MoreRenderFlex extends RenderFlex {
     super.verticalDirection,
     super.textBaseline,
     super.clipBehavior,
+    required this.customList,
   }) : _moreMainAxisAlignment = moreMainAxisAlignment {
+
+    if (moreMainAxisAlignment == MoreMainAxisAlignment.custom) {
+      _customList.addAll(customList);
+      for (int i = 0; i < _customList.length; i++) {
+        double temp = _customList[i];
+        temp = math.max(temp, 0.0);
+        temp = math.min(temp, 1.0);
+        _customList.removeAt(i);
+        _customList.insert(i, temp);
+      }
+      _customList.add(0.0);
+    }
+
     addAll(children);
   }
+
+  List<double> customList;
+  final List<double> _customList = [];
 
   MoreMainAxisAlignment get moreMainAxisAlignment => _moreMainAxisAlignment;
   MoreMainAxisAlignment _moreMainAxisAlignment;
@@ -718,7 +739,6 @@ class MoreRenderFlex extends RenderFlex {
 
       case MoreMainAxisAlignment.spaceBetweenStep:
         mode = MainAxisAlignmentMode.step;
-        count = 0;
         leadingSpace = 0.0;
         unitSpace = remainingSpace / _getStepSum(childCount - 1);
       case MoreMainAxisAlignment.spaceBetweenStepBack:
@@ -743,7 +763,6 @@ class MoreRenderFlex extends RenderFlex {
 
       case MoreMainAxisAlignment.spaceBetweenFib:
         mode = MainAxisAlignmentMode.fib;
-        count = 0;
         leadingSpace = 0.0;
         unitSpace = remainingSpace / _getFibSum(childCount - 1);
       case MoreMainAxisAlignment.spaceBetweenFibBack:
@@ -764,6 +783,11 @@ class MoreRenderFlex extends RenderFlex {
         count = childCount + 1;
         unitSpace = remainingSpace / _getFibSum(childCount + 1);
         leadingSpace = unitSpace * _getFibNumber(childCount + 1);
+
+      /* mode custom */
+      case MoreMainAxisAlignment.custom:
+        mode = MainAxisAlignmentMode.custom;
+        leadingSpace = actualSize * _customList.first;
     }
 
     // Position elements
@@ -838,6 +862,12 @@ class MoreRenderFlex extends RenderFlex {
                 _getMainSize(child.size) + unitSpace * _getFibNumber(count);
           }
           break;
+        case MainAxisAlignmentMode.custom:
+          if (flipMainAxis) {
+            childMainPosition = actualSize * (1 - _customList[count]);
+          } else {
+            childMainPosition = actualSize * _customList[count];
+          }
       }
 
       child = childParentData.nextSibling;

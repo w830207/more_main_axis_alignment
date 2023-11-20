@@ -45,6 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   MoreFlex(
                     direction: Axis.horizontal,
                     moreMainAxisAlignment: MoreMainAxisAlignment.values[index],
+                    customList: const [0, 0.25, 0.35, 0.5, 0.98],
                     children: [
                       for (int i = 0; i < 5; i++)
                         Container(
@@ -68,9 +69,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-
-extension on MoreMainAxisAlignment{
-  String toShortString(){
+extension on MoreMainAxisAlignment {
+  String toShortString() {
     return toString().split('.').last;
   }
 }

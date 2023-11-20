@@ -14,12 +14,18 @@ class MoreFlex extends MultiChildRenderObjectWidget {
     this.verticalDirection = VerticalDirection.down,
     this.textBaseline, // NO DEFAULT: we don't know what the text's baseline should be
     this.clipBehavior = Clip.none,
+    this.customList = const [],
     super.children,
-  }) : assert(
+  })  : assert(
             !identical(crossAxisAlignment, CrossAxisAlignment.baseline) ||
                 textBaseline != null,
-            'textBaseline is required if you specify the crossAxisAlignment with CrossAxisAlignment.baseline');
+            'textBaseline is required if you specify the crossAxisAlignment with CrossAxisAlignment.baseline'),
+        assert(
+            !identical(moreMainAxisAlignment, MoreMainAxisAlignment.custom) ||
+                customList.length == children.length,
+            "customList's length should same as children if you specify the moreMainAxisAlignment with MoreMainAxisAlignment.custom");
 
+  final List<double> customList;
   final Axis direction;
   final MoreMainAxisAlignment moreMainAxisAlignment;
   final MainAxisSize mainAxisSize;
@@ -56,6 +62,7 @@ class MoreFlex extends MultiChildRenderObjectWidget {
       verticalDirection: verticalDirection,
       textBaseline: textBaseline,
       clipBehavior: clipBehavior,
+      customList: customList,
     );
   }
 
@@ -70,7 +77,8 @@ class MoreFlex extends MultiChildRenderObjectWidget {
       ..textDirection = getEffectiveTextDirection(context)
       ..verticalDirection = verticalDirection
       ..textBaseline = textBaseline
-      ..clipBehavior = clipBehavior;
+      ..clipBehavior = clipBehavior
+      ..customList = customList;
   }
 
   @override
