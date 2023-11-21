@@ -1,39 +1,80 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# more_main_axis_alignment
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+<img src="doc/meme.webp"/>
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+<img src="doc/feature.webp" width="50%" height="50%">
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Add the package to your pubspec.yaml:
 
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
+```yaml
+dependencies:
+  more_main_axis_alignment: 0.0.1
 ```
 
-## Additional information
+In your dart file, import the library:
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+```dart
+import 'package:more_main_axis_alignment/more_main_axis_alignment.dart';
+```
+
+## Usage
+Flex
+```dart
+MoreFlex(
+    direction: Axis.horizontal,
+    moreMainAxisAlignment: MoreMainAxisAlignment.spaceBeside,
+    children: [
+      for (int i = 0; i < 5; i++)
+        Container(
+          width: 20,
+          height: 20,
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+    ],
+  ),
+```
+Row
+```dart
+MoreRow(
+    moreMainAxisAlignment: MoreMainAxisAlignment.spaceBetweenStep,
+    children: [
+      for (int i = 0; i < 5; i++)
+        Container(
+          width: 20,
+          height: 20,
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+    ],
+  ),
+```
+Column
+```dart
+MoreColumn(
+    moreMainAxisAlignment: MoreMainAxisAlignment.custom,
+    customList: const [0, 0.25, 0.35, 0.5, 0.98],
+    children: [
+      for (int i = 0; i < 5; i++)
+        Container(
+          width: 20,
+          height: 20,
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+    ],
+  ),
+```
+
+
+### Suggestions welcome！
