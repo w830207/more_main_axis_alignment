@@ -5,55 +5,59 @@ import 'package:flutter/rendering.dart';
 
 enum MoreMainAxisAlignment {
   /// Place the children as close to the start of the main axis as possible.
-  start,
+  start(mode: MainAxisAlignmentMode.normal),
 
   /// Place the children as close to the end of the main axis as possible.
-  end,
+  end(mode: MainAxisAlignmentMode.normal),
 
   /// Place the children as close to the middle of the main axis as possible.
-  center,
+  center(mode: MainAxisAlignmentMode.normal),
 
   /// Place the free space evenly between the children.
-  spaceBetween,
+  spaceBetween(mode: MainAxisAlignmentMode.normal),
 
   /// Place the free space evenly between the children as well as half of that
   /// space before and after the first and last child.
-  spaceAround,
+  spaceAround(mode: MainAxisAlignmentMode.normal),
 
   /// Place the free space evenly between the children as well as before and
   /// after the first and last child.
-  spaceEvenly,
+  spaceEvenly(mode: MainAxisAlignmentMode.normal),
 
   /// Place the free space evenly between the children as well as twice that
   /// space before and after the first and last child.
-  spaceBeside,
+  spaceBeside(mode: MainAxisAlignmentMode.normal),
 
   /// Place the space between the children according to the Arithmetic sequence 1,2,3... .
-  spaceBetweenStep,
+  spaceBetweenStep(mode: MainAxisAlignmentMode.step),
 
   /// same as [spaceBetweenStep] but backward.
-  spaceBetweenStepBack,
+  spaceBetweenStepBack(mode: MainAxisAlignmentMode.step),
 
   /// Place the space around the children according to the Arithmetic sequence 1,2,3... .
-  spaceAroundStep,
+  spaceAroundStep(mode: MainAxisAlignmentMode.step),
 
   /// same as [spaceAroundStep] but backward.
-  spaceAroundStepBack,
+  spaceAroundStepBack(mode: MainAxisAlignmentMode.step),
 
   /// Place the space between the children according to the Fibonacci sequence.
-  spaceBetweenFib,
+  spaceBetweenFib(mode: MainAxisAlignmentMode.fib),
 
   /// same as [spaceBetweenFib] but backward.
-  spaceBetweenFibBack,
+  spaceBetweenFibBack(mode: MainAxisAlignmentMode.fib),
 
   /// Place the space around the children according to the Fibonacci sequence.
-  spaceAroundFib,
+  spaceAroundFib(mode: MainAxisAlignmentMode.fib),
 
   /// same as [spaceAroundFib] but backward.
-  spaceAroundFibBack,
+  spaceAroundFibBack(mode: MainAxisAlignmentMode.fib),
 
   /// place children by using [MoreRenderFlex.customList]
-  custom,
+  custom(mode: MainAxisAlignmentMode.custom);
+
+  const MoreMainAxisAlignment({required this.mode});
+
+  final MainAxisAlignmentMode mode;
 }
 
 enum MainAxisAlignmentMode {
@@ -103,7 +107,6 @@ class MoreRenderFlex extends RenderFlex {
     super.clipBehavior,
     required this.customList,
   }) : _moreMainAxisAlignment = moreMainAxisAlignment {
-
     if (moreMainAxisAlignment == MoreMainAxisAlignment.custom) {
       _customList.addAll(customList);
       for (int i = 0; i < _customList.length; i++) {
@@ -700,7 +703,7 @@ class MoreRenderFlex extends RenderFlex {
     late final double unitSpace;
     bool isForward = true;
     int count = 0;
-    MainAxisAlignmentMode mode = MainAxisAlignmentMode.normal;
+    MainAxisAlignmentMode mode = moreMainAxisAlignment.mode;
 
     // flipMainAxis is used to decide whether to lay out
     // left-to-right/top-to-bottom (false), or right-to-left/bottom-to-top
@@ -712,7 +715,6 @@ class MoreRenderFlex extends RenderFlex {
 
     switch (moreMainAxisAlignment) {
       /* mode normal */
-
       case MoreMainAxisAlignment.start:
         leadingSpace = 0.0;
         betweenSpace = 0.0;
@@ -736,49 +738,39 @@ class MoreRenderFlex extends RenderFlex {
         leadingSpace = betweenSpace * 2;
 
       /* mode step */
-
       case MoreMainAxisAlignment.spaceBetweenStep:
-        mode = MainAxisAlignmentMode.step;
         leadingSpace = 0.0;
         unitSpace = remainingSpace / _getStepSum(childCount - 1);
       case MoreMainAxisAlignment.spaceBetweenStepBack:
-        mode = MainAxisAlignmentMode.step;
         isForward = false;
         count = childCount;
         leadingSpace = 0.0;
         unitSpace = remainingSpace / _getStepSum(childCount - 1);
       case MoreMainAxisAlignment.spaceAroundStep:
-        mode = MainAxisAlignmentMode.step;
         count = 1;
         unitSpace = remainingSpace / _getStepSum(childCount + 1);
         leadingSpace = unitSpace;
       case MoreMainAxisAlignment.spaceAroundStepBack:
-        mode = MainAxisAlignmentMode.step;
         isForward = false;
         count = childCount + 1;
         unitSpace = remainingSpace / _getStepSum(childCount + 1);
         leadingSpace = unitSpace * (childCount + 1);
 
       /* mode fib */
-
       case MoreMainAxisAlignment.spaceBetweenFib:
-        mode = MainAxisAlignmentMode.fib;
         leadingSpace = 0.0;
         unitSpace = remainingSpace / _getFibSum(childCount - 1);
       case MoreMainAxisAlignment.spaceBetweenFibBack:
-        mode = MainAxisAlignmentMode.fib;
         isForward = false;
         count = childCount;
         leadingSpace = 0.0;
         unitSpace = remainingSpace / _getFibSum(childCount - 1);
       case MoreMainAxisAlignment.spaceAroundFib:
-        mode = MainAxisAlignmentMode.fib;
         isForward = true;
         count = 1;
         unitSpace = remainingSpace / _getFibSum(childCount + 1);
         leadingSpace = unitSpace;
       case MoreMainAxisAlignment.spaceAroundFibBack:
-        mode = MainAxisAlignmentMode.fib;
         isForward = false;
         count = childCount + 1;
         unitSpace = remainingSpace / _getFibSum(childCount + 1);
@@ -786,7 +778,6 @@ class MoreRenderFlex extends RenderFlex {
 
       /* mode custom */
       case MoreMainAxisAlignment.custom:
-        mode = MainAxisAlignmentMode.custom;
         leadingSpace = actualSize * _customList.first;
     }
 
