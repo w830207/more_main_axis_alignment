@@ -1,10 +1,10 @@
 # more_main_axis_alignment
 
-<img src="doc/meme.webp"/>
+<img src="https://raw.githubusercontent.com/w830207/more_main_axis_alignment/main/doc/meme.webp" width="50%" height="50%">
 
 ## Features
 
-<img src="doc/feature.webp" width="50%" height="50%">
+<img src="https://raw.githubusercontent.com/w830207/more_main_axis_alignment/main/doc/feature.webp" width="50%" height="50%">
 
 ## Getting started
 
@@ -12,7 +12,7 @@ Add the package to your pubspec.yaml:
 
 ```yaml
 dependencies:
-  more_main_axis_alignment: 0.0.1
+  more_main_axis_alignment: 0.0.2
 ```
 
 In your dart file, import the library:
