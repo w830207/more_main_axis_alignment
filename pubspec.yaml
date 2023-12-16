@@ -1,5 +1,5 @@
 name: more_main_axis_alignment
-description: I need more MainAxisAlignment.
+description: Just like Flex(),but this package provides more MainAxisAlignment.
 version: 1.0.0
 repository: https://github.com/w830207/more_main_axis_alignment
 
