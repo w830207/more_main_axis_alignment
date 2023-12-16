@@ -46,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     direction: Axis.horizontal,
                     moreMainAxisAlignment: MoreMainAxisAlignment.values[index],
                     customList: const [0, 0.25, 0.35, 0.5, 0.98],
+                    separateCount: 3,
                     children: [
                       for (int i = 0; i < 5; i++)
                         Container(

@@ -15,6 +15,7 @@ class MoreFlex extends MultiChildRenderObjectWidget {
     this.textBaseline, // NO DEFAULT: we don't know what the text's baseline should be
     this.clipBehavior = Clip.none,
     this.customList = const [],
+    this.separateCount = 0,
     super.children,
   })  : assert(
             !identical(crossAxisAlignment, CrossAxisAlignment.baseline) ||
@@ -34,6 +35,7 @@ class MoreFlex extends MultiChildRenderObjectWidget {
   final VerticalDirection verticalDirection;
   final TextBaseline? textBaseline;
   final Clip clipBehavior;
+  final int separateCount;
 
   bool get _needTextDirection {
     switch (direction) {
@@ -63,6 +65,7 @@ class MoreFlex extends MultiChildRenderObjectWidget {
       textBaseline: textBaseline,
       clipBehavior: clipBehavior,
       customList: customList,
+      separateCount: separateCount,
     );
   }
 

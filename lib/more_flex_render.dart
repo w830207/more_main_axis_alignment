@@ -53,7 +53,10 @@ enum MoreMainAxisAlignment {
   spaceAroundFibBack(mode: MainAxisAlignmentMode.fib),
 
   /// place children by using [MoreRenderFlex.customList]
-  custom(mode: MainAxisAlignmentMode.custom);
+  custom(mode: MainAxisAlignmentMode.custom),
+
+  /// separate children out like spaceBetween by using [MoreRenderFlex.separateCount]
+  separate(mode: MainAxisAlignmentMode.separate);
 
   const MoreMainAxisAlignment({required this.mode});
 
@@ -65,6 +68,7 @@ enum MainAxisAlignmentMode {
   step,
   fib,
   custom,
+  separate,
 }
 
 bool? _startIsTopLeft(Axis direction, TextDirection? textDirection,
@@ -106,6 +110,7 @@ class MoreRenderFlex extends RenderFlex {
     super.textBaseline,
     super.clipBehavior,
     required this.customList,
+    required this.separateCount,
   }) : _moreMainAxisAlignment = moreMainAxisAlignment {
     if (moreMainAxisAlignment == MoreMainAxisAlignment.custom) {
       _customList.addAll(customList);
@@ -124,6 +129,8 @@ class MoreRenderFlex extends RenderFlex {
 
   List<double> customList;
   final List<double> _customList = [];
+
+  final int separateCount;
 
   MoreMainAxisAlignment get moreMainAxisAlignment => _moreMainAxisAlignment;
   MoreMainAxisAlignment _moreMainAxisAlignment;
@@ -703,7 +710,6 @@ class MoreRenderFlex extends RenderFlex {
     late final double unitSpace;
     bool isForward = true;
     int count = 0;
-    MainAxisAlignmentMode mode = moreMainAxisAlignment.mode;
 
     // flipMainAxis is used to decide whether to lay out
     // left-to-right/top-to-bottom (false), or right-to-left/bottom-to-top
@@ -779,6 +785,14 @@ class MoreRenderFlex extends RenderFlex {
       /* mode custom */
       case MoreMainAxisAlignment.custom:
         leadingSpace = actualSize * _customList.first;
+
+      /*mode separate*/
+      case MoreMainAxisAlignment.separate:
+        if (separateCount == childCount) {
+          leadingSpace = remainingSpace;
+        } else {
+          leadingSpace = 0.0;
+        }
     }
 
     // Position elements
@@ -830,7 +844,7 @@ class MoreRenderFlex extends RenderFlex {
               Offset(childCrossPosition, childMainPosition);
       }
 
-      switch (mode) {
+      switch (moreMainAxisAlignment.mode) {
         case MainAxisAlignmentMode.normal:
           if (flipMainAxis) {
             childMainPosition -= betweenSpace;
@@ -858,6 +872,16 @@ class MoreRenderFlex extends RenderFlex {
             childMainPosition = actualSize * (1 - _customList[count]);
           } else {
             childMainPosition = actualSize * _customList[count];
+          }
+        case MainAxisAlignmentMode.separate:
+          double temp = 0.0;
+          if (count == childCount - separateCount) {
+            temp = remainingSpace;
+          }
+          if (flipMainAxis) {
+            childMainPosition -= temp;
+          } else {
+            childMainPosition += _getMainSize(child.size) + temp;
           }
       }
 
