@@ -12,7 +12,7 @@ Add the package to your pubspec.yaml:
 
 ```yaml
 dependencies:
-  more_main_axis_alignment: 0.0.2
+  more_main_axis_alignment: 1.0.0
 ```
 
 In your dart file, import the library:
